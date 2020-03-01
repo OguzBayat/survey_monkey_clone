@@ -1,0 +1,74 @@
+<div class="col">
+	<h3 class="page-header"><%= @survey.title %></h3>
+	<hr class="my-4">
+	<form id="survey">
+		<% @survey.polls.each do |poll| %>
+		<div class="card mb-3">
+			<div class="card-body">
+				<b><%= poll.question %></b>
+				<% if !poll.options.nil? %>
+					<% poll.options.each_with_index do |option, idx| %>
+					<div class="radio">
+						<label>
+							<input type="radio" name="poll-<%= poll.id %>" value="<%= idx %>">
+							<%= option %>
+						</label>
+					</div>
+					<% end %>
+				<% else %>
+					<div class='form-group'>
+						<textarea class="form-control" name="tpoll-<%= poll.id %>"></textarea>
+					</div>
+				<% end %>
+			</div>
+		</div>
+		<% end %>
+	</form>
+	<button class="btn btn-primary submit-btn">Gönder</button>
+	<a href="/surveys" class="btn btn-secondary">Geri Dön</a>
+</div>
+<script type="text/javascript">
+	
+	
+
+	
+	
+
+	$(".submit-btn").on('click', function() {
+		var answers = {};
+		var textanswers = {};
+		for(poll of $("#survey").serializeArray()) {
+			var pollmu = poll.name.split('-')[0];
+			if (pollmu == 'tpoll'){
+				var answer = -1;
+				var textanswer = poll.value
+			}
+			else{
+				var answer = poll.value;
+			}
+			var poll_id = poll.name.split('-')[1];
+			answers[poll_id] = answer;
+			textanswers[poll_id] = textanswer;
+		}
+		$.ajax({
+			type: "POST",
+			url: "/surveys/<%= @survey.id %>/submit",
+			data: {
+				'answers': answers,
+				'textanswers': textanswers
+			},
+			dataType: "json",
+			success: function(response) {
+				if(response.status == "success") {
+					alert("Anketi tamamladınız.");
+					window.location.href = "/surveys";
+				} else {
+					alert("Bir Hata Oluştu.");
+				}
+			}
+		});
+	});
+<% if @survey.is_closed? %>
+	$("input[type=radio").prop('disabled', true);
+<% end %>
+</script>

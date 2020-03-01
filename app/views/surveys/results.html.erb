@@ -1,0 +1,100 @@
+<div class="col">
+	<div class="page-header clearfix">
+		<div class="row">
+			<div class="col-sm-4 float-left">
+				<h3>Anket Sonuçları (<%= @survey.title %>)</h3>
+			</div>
+			<div class="col-sm-2 float-right">
+				<%= link_to "Excel'e Aktar", params.permit(:s).merge({ format: :xlsx }), class: "btn btn-light btn-block" %>
+			</div>
+			<div class="col-sm-2 float-right">
+				<%= select_tag "survey-selector", options_from_collection_for_select(Survey.order(created_at: :desc), 'id', 'title', @survey.id), class: "form-control" %>
+			</div>
+			<div class="col-sm-2 float-right">
+				<span class="btn btn-primary btn-filter form-control">Getir</span>
+			</div>
+		</div>
+	</div>
+	<hr class="my-4">
+	<div>
+	<% @survey.polls.each.with_index do |poll,index| %>
+		<% if !poll.options.nil? %>
+		<div class="col-md-12">
+			<h5><%= index+1 %>)<%= poll.question %></h5>
+			<canvas style="max-width: 70%;" id="poll-<%= poll.id %>"></canvas>
+		</div>
+		<% end %>
+	<% end %>
+	</div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+	$( ".btn-filter" ).click(function() {
+		window.location.href = window.location.pathname  + "?s=" + $("#survey-selector").val();
+	});
+
+	var bgColors = [
+		'rgba(255, 99, 132, 0.2)',
+		'rgba(54, 162, 235, 0.2)',
+		'rgba(255, 206, 86, 0.2)',
+		'rgba(75, 192, 192, 0.2)',
+		'rgba(153, 102, 255, 0.2)',
+		'rgba(255, 159, 64, 0.2)',
+		'rgba(255, 99, 132, 0.2)',
+		'rgba(54, 162, 235, 0.2)',
+		'rgba(255, 206, 86, 0.2)',
+		'rgba(75, 192, 192, 0.2)',
+		'rgba(153, 102, 255, 0.2)',
+		'rgba(255, 159, 64, 0.2)',
+	];
+
+	var borderColors = [
+		'rgba(255,99,132,1)',
+		'rgba(54, 162, 235, 1)',
+		'rgba(255, 206, 86, 1)',
+		'rgba(75, 192, 192, 1)',
+		'rgba(153, 102, 255, 1)',
+		'rgba(255, 159, 64, 1)',
+		'rgba(0, 0, 0, 1)',
+		'rgba(0, 0, 0, 1)',
+		'rgba(0, 0, 0, 1)',
+		'rgba(0, 0, 0, 1)',
+		'rgba(0, 0, 0, 1)',
+		'rgba(0, 0, 0, 1)',
+	];
+
+	<% @survey.polls.each do |poll| %>
+	var ctx = document.getElementById("poll-<%= poll.id %>").getContext('2d');
+	<% if !poll.options.nil? %>
+	var surveyChart = new Chart(ctx, {
+		type: 'bar',
+		data: {
+			labels: ["<%= raw poll.options.join('", "') %>"],
+			datasets: [{
+				label: '',
+				data: [<%= poll.results.join(', ') %>],
+				backgroundColor: bgColors,
+				borderColor: borderColors,
+				borderWidth: 1
+			}]
+		},
+		options: {
+			scales: {
+				yAxes: [{ ticks: { beginAtZero:true } }]
+			},
+			legend: {
+				// display: false
+				position: 'top',
+				labels: {
+					boxWidth: 0
+				}
+			}
+		}
+	});
+	<% end %>
+<% end %>
+
+});
+</script>

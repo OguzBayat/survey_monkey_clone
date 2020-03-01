@@ -1,0 +1,133 @@
+<%= form_for @survey, html: { class: "row survey-form" } do |f| %>
+	<div class="col-md-8">
+		<div class="form-group">
+			<label class="control-label">Başlık:</label>
+			<%= f.text_field :title, class: "form-control" %>
+		</div>
+		<div class="form-group">
+			<label class="control-label">Sorular:</label>
+			<div class="card">
+				<div class="card-body" id="polls">
+				<% @survey.polls.each_with_index do |poll, idx| %>
+					<div class="poll" id="poll-<%= idx+1 %>" data-mid="<%= poll.id %>" data-pid="<%= idx+1 %>" data-tip='<%= poll.question_type %>'>
+						<button class="remove btn btn-sm btn-danger float-right">
+							<i class="fas fa-times-circle"></i>
+						</button>
+						<div class="form-group">
+							<label class="control-label">Soru <%= idx+1 %>:</label>
+							<input type="text" class="form-control question" value="<%= poll.question %>">
+						</div>
+						<% if !poll.options.nil? %>
+							<div class="form-group">
+								<textarea class="form-control options" rows="5" placeholder="Seçenekleri alt alta yazınız."><%= poll.options.join("\n") %></textarea>
+							</div>
+						<% end %>
+					</div>
+				<% end %>
+				</div>
+				<div class="card-footer">
+					<div class="row">
+						<button class="btn btn-sm btn-success" id="addPoll">Çoktan Seçmeli Soru Ekle</button>
+						<button class="btn btn-sm btn-primary" id="addPoll2">Metinsel Soru Ekle</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label">Durum:</label>
+			<%= f.select :closed, [["Aktif", false], ["Pasif", true]], {include_blank: false, selected: @survey.is_closed?}, { :class => 'custom-select mr-sm-2' } %>
+		</div>
+		<div class="form-group">
+			<label class="control-label">Bitiş Tarihi:</label>
+			<%= f.text_field :end_date, class: "form-control date-picker", readonly: true %>
+		</div>
+	</div>
+	<div class="col-sm-12">
+		<button id="saveBtn" class="btn btn-primary">Kaydet</button>
+		<a href="/surveys" class="btn btn-light">Vazgeç</a>
+		<% unless @survey.new_record? %>
+		<a href="/surveys/<%= @survey.id %>" class="btn btn-danger" data-method="delete" data-confirm="Emin misiniz?">Kaldır</a>
+		<% end %>
+	</div>
+<% end %>
+<script type="text/javascript">
+
+$(document).ready(function(){
+	
+
+	$("#addPoll").on('click', function(e) {
+		e.preventDefault();
+		var increment = parseInt($("#polls").children().last().data('pid')) + 1;
+		if($("#polls").children().length < 1 ){
+			increment = 1;
+		}
+		$("#polls").append("<div class='poll' id='poll-" + increment + "' data-pid='" + increment + "' data-tip='secmeli'><button class='remove btn btn-sm btn-danger'>Kaldır</button><div class='form-group'><label class='control-label'>Soru " + increment + ":</label><input type='text' class='form-control question'></div><div class='form-group'><textarea class='form-control options' rows='5' placeholder='Seçenekleri alt alta yazınız.'></textarea></div></div>");
+
+	});
+
+	$("#addPoll2").on('click', function(e) {
+		e.preventDefault();
+		var increment = parseInt($("#polls").children().last().data('pid')) + 1;
+		if($("#polls").children().length < 1 ){
+			increment = 1;
+		}
+		$("#polls").append("<div class='poll' id='poll-" + increment + "' data-pid='" + increment + "' data-tip='metin'><button class='remove btn btn-sm btn-danger'>Kaldır</button><div class='form-group'><label class='control-label'>Soru " + increment + ":</label><input type='text' class='form-control question'></div></div>");
+	});
+
+	var deleted_ids = [];
+
+	$(document).on('click', '.remove', function(e) {
+		e.preventDefault();
+		var model_id = $(this).parent().data('mid');
+		if(!!model_id) {
+			deleted_ids.push(model_id);
+		}
+		$(this).parent().remove();
+	});
+
+	$("#saveBtn").on('click', function(e) {
+		e.preventDefault();
+		var polls_map = $("#polls").children().map(function(idx, poll) {
+			var opt ="";
+			if ( !$(poll).find('.options').val()){
+				opt = opt;
+			}
+			else{
+				opt = $(poll).find('.options').val().split('\n');
+			}
+			return {
+				'id': $(poll).data('mid'),
+				'question': $(poll).find('.question').val(),
+				'options': opt
+			};
+		});
+
+		for(i of deleted_ids) {
+			polls_map.push({ 'id': i, '_destroy': '1' });
+		}
+
+		$.ajax({
+			type: $("input[name=_method]").val() || 'post',
+			url: $('.survey-form').attr('action'),
+			data: {
+				_method: $("input[name=_method]").val(),
+				authenticity_token: "<%= form_authenticity_token %>",
+				survey: {
+					title: $("#survey_title").val(),
+					closed: $("#survey_closed").val(),
+					end_date: $("#survey_end_date").val(),
+					polls_attributes: polls_map.toArray()
+				}
+			},
+			dataType: "json",
+			success: function(response) {
+				if(response.status == "success") {
+					window.location.href = "/surveys";
+				} else {
+					alert("Bir Hata Oluştu.");
+				}
+			}
+		});
+	});
+});
+</script>
