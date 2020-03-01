@@ -1,24 +1,17 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Anket uygulaması...
 
-Things you may want to cover:
+Bazı bilgiler:
 
-* Ruby version
+* Ruby version: 2.5.3
 
-* System dependencies
+* Database: sqlite
 
-* Configuration
+* Rails version: 6.0.2.1
 
-* Database creation
+* Klonla
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
+* bundle, rails db:migrate, rails s komutları ile çalıştır.
 
 * ...
