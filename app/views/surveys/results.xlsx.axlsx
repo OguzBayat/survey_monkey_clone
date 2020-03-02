@@ -1,0 +1,29 @@
+wb = xlsx_package.workbook
+wb.use_shared_strings = true
+wb.styles do |style|
+	wb.add_worksheet(name: "Anket Sonuçları") do |sheet|
+
+		r = 0
+
+		@survey.polls.each do |poll|
+
+			if !poll.options.nil?
+			sheet.add_row [poll.question]
+
+			_options = poll.options
+			_results = poll.results
+
+			15.times do |i|
+				sheet.add_row [_options[i], _results[i]];
+			end
+
+			sheet.add_chart(Axlsx::Bar3DChart, start_at: "A#{r+1}", end_at: "L#{r+16}", title: poll.question,  barDir: :col) do |chart|
+				chart.add_series data: sheet["B#{r+2}:B#{r+1+_options.count}"], labels: sheet["A#{r+2}:A#{r+1+_options.count}"]
+			end
+			r += 16
+			
+			end
+		end
+	end
+	
+end

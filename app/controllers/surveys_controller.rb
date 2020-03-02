@@ -58,6 +58,7 @@ class SurveysController < ApplicationController
 	# GET /surveys/results
 	def results
 		@survey = params[:s] ? Survey.find(params[:s]) : Survey.first
+		@pollanswers = PollAnswer.where(poll_id: @survey.polls.ids)
 		arr = []
 		@survey.polls.each do |poll|
 			if !poll.options.nil?
