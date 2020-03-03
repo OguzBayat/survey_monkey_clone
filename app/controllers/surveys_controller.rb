@@ -27,6 +27,23 @@ class SurveysController < ApplicationController
 		end
 	end
 
+	# GET /surveys/:id/edit
+	def edit
+		@survey = Survey.find params[:id]
+	end
+
+	# PATCH /surveys/:id
+	# PUT /surveys/:id
+	def update
+		@survey = Survey.find params[:id]
+		@survey.assign_attributes(survey_params)
+		if @survey.save
+			render json: { status: "success" }
+		else
+			render json: { status: "failed" }
+		end
+	end
+
 	# POST /surveys/:id/submit
 	def submit
 		survey = Survey.find(params[:id])

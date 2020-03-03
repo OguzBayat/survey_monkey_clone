@@ -9,9 +9,9 @@
 			<div class="card">
 				<div class="card-body" id="polls">
 				<% @survey.polls.each_with_index do |poll, idx| %>
-					<div class="poll" id="poll-<%= idx+1 %>" data-mid="<%= poll.id %>" data-pid="<%= idx+1 %>" data-tip='<%= poll.question_type %>'>
+					<div class="poll" id="poll-<%= idx+1 %>" data-mid="<%= poll.id %>" data-pid="<%= idx+1 %>">
 						<button class="remove btn btn-sm btn-danger float-right">
-							<i class="fas fa-times-circle"></i>
+							Kaldır
 						</button>
 						<div class="form-group">
 							<label class="control-label">Soru <%= idx+1 %>:</label>
@@ -23,6 +23,7 @@
 							</div>
 						<% end %>
 					</div>
+				<hr class="my-4">
 				<% end %>
 				</div>
 				<div class="card-footer">
@@ -61,7 +62,7 @@ $(document).ready(function(){
 		if($("#polls").children().length < 1 ){
 			increment = 1;
 		}
-		$("#polls").append("<div class='poll' id='poll-" + increment + "' data-pid='" + increment + "' data-tip='secmeli'><button class='remove btn btn-sm btn-danger'>Kaldır</button><div class='form-group'><label class='control-label'>Soru " + increment + ":</label><input type='text' class='form-control question'></div><div class='form-group'><textarea class='form-control options' rows='5' placeholder='Seçenekleri alt alta yazınız.'></textarea></div></div>");
+		$("#polls").append("<div class='poll' id='poll-" + increment + "' data-pid='" + increment + "' data-tip='secmeli'><button class='remove btn btn-sm btn-danger float-right'>Kaldır</button><div class='form-group'><label class='control-label'>Soru " + increment + ":</label><input type='text' class='form-control question'></div><div class='form-group'><textarea class='form-control options' rows='5' placeholder='Seçenekleri alt alta yazınız.'></textarea></div></div>");
 
 	});
 
@@ -71,7 +72,7 @@ $(document).ready(function(){
 		if($("#polls").children().length < 1 ){
 			increment = 1;
 		}
-		$("#polls").append("<div class='poll' id='poll-" + increment + "' data-pid='" + increment + "' data-tip='metin'><button class='remove btn btn-sm btn-danger'>Kaldır</button><div class='form-group'><label class='control-label'>Soru " + increment + ":</label><input type='text' class='form-control question'></div></div>");
+		$("#polls").append("<div class='poll' id='poll-" + increment + "' data-pid='" + increment + "' data-tip='metin'><button class='remove btn btn-sm btn-danger float-right'>Kaldır</button><div class='form-group'><label class='control-label'>Soru " + increment + ":</label><input type='text' class='form-control question'></div></div>");
 	});
 
 	var deleted_ids = [];

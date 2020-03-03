@@ -32,6 +32,7 @@
 					<div class="btn-group-sm ">
 						<% unless survey.is_closed? %>
 							<a href="/surveys/<%= survey.id %>" class="btn btn-sm btn-light">Ankete Katıl</a>
+							<a href="/surveys/<%= survey.id %>/edit" class="btn btn-sm btn-info">Düzenle</a>
 						<% end %>
 					</div>
 				</td>
