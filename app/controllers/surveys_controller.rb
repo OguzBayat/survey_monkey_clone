@@ -1,22 +1,18 @@
 class SurveysController < ApplicationController
 
-	# GET /surveys
 	def index
 		@surveys = Survey.all
 	end
 
-	# GET /surveys/:id
 	def show
 		@survey = Survey.find params[:id]
 		poll_ids = @survey.polls.pluck(:id)
 	end
 
-	# GET /surveys/new
 	def new
 		@survey = Survey.new
 	end
 
-	# POST /surveys
 	def create
 		survey = Survey.create(survey_params)
 		if survey
@@ -27,13 +23,10 @@ class SurveysController < ApplicationController
 		end
 	end
 
-	# GET /surveys/:id/edit
 	def edit
 		@survey = Survey.find params[:id]
 	end
 
-	# PATCH /surveys/:id
-	# PUT /surveys/:id
 	def update
 		@survey = Survey.find params[:id]
 		@survey.assign_attributes(survey_params)
@@ -44,7 +37,6 @@ class SurveysController < ApplicationController
 		end
 	end
 
-	# POST /surveys/:id/submit
 	def submit
 		survey = Survey.find(params[:id])
 
@@ -72,7 +64,6 @@ class SurveysController < ApplicationController
 		end
 	end
 
-	# GET /surveys/results
 	def results
 		@survey = params[:s] ? Survey.find(params[:s]) : Survey.first
 		@pollanswers = PollAnswer.where(poll_id: @survey.polls.ids)
