@@ -13,5 +13,3 @@ Bazı bilgiler:
 * Klonla
 
 * bundle, rails db:migrate, rails s komutları ile çalıştır.
-
-* ...
