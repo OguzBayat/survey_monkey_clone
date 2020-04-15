@@ -19,11 +19,11 @@ class SurveysController < ApplicationController
 	# POST /surveys
 	def create
 		survey = Survey.create(survey_params)
-		if survey
-			puts survey.errors.full_messages
+		if survey.persisted?
+			#puts survey.errors.full_messages
 			render json: { status: "success" }
 		else
-			render json: { status: "failed" }
+			render json: { status: survey.errors.full_messages }
 		end
 	end
 
@@ -49,12 +49,11 @@ class SurveysController < ApplicationController
 		survey = Survey.find(params[:id])
 
 		if survey.is_closed?
-			render json: { status: "failed" }
-			return false
+			return render json: { status: "failed" }
 		end
 		ActiveRecord::Base.transaction do
 			begin
-				params[:answers].each do |poll, answer, textanswer|
+				params[:answers].each do |poll, answer, text_answer|
 					if answer == "-1"
 						ans = "-1"
 						tans = params[:textanswers]["#{poll}"]

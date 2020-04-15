@@ -3,6 +3,8 @@ class Poll < ApplicationRecord
   has_many :poll_answers
   serialize :options
 
+  validate :question
+
   def results
   	answ = self.poll_answers.pluck(:answer)
   	self.options.each_with_index.map do |opt, idx|
