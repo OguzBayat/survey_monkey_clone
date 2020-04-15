@@ -6,6 +6,4 @@ Rails.application.routes.draw do
   post '/surveys/:id/submit' => 'surveys#submit'
   get '/surveys/results' => 'surveys#results'
   resources :surveys
-
-
 end
